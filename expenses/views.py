@@ -1,4 +1,4 @@
-from rest_framework import generics,
+from rest_framework import generics
 from .models import Expense, Category
 from .serializers import ExpenseSerializer, CategorySerializer
 
