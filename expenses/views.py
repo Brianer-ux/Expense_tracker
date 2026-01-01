@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum
+from django.utils.dateparse import parse_date
 from .models import Expense, Category
 from .serializers import ExpenseSerializer, CategorySerializer
 
@@ -11,10 +12,22 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Expense.objects.filter(user=self.request.user)
+        queryset = Expense.objects.filter(user=self.request.user)
+
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if start_date:
+            queryset = queryset.filter(date__gte=parse_date(start_date))
+
+        if end_date:
+            queryset = queryset.filter(date__lte=parse_date(end_date))
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 class ExpenseDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ExpenseSerializer
     permission_classes = [IsAuthenticated]
