@@ -16,12 +16,16 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
 
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
+        category = self.request.query_params.get('category')
 
         if start_date:
             queryset = queryset.filter(date__gte=parse_date(start_date))
 
         if end_date:
             queryset = queryset.filter(date__lte=parse_date(end_date))
+       
+        if category:
+            queryset = queryset.filter(category__name__iexact=category)
 
         return queryset
 
