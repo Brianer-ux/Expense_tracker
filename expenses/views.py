@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum
 from django.utils.dateparse import parse_date
@@ -55,9 +56,10 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Category.objects.filter(user=self.request.user)
 
 class ExpenseSummaryView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         period = request.query_params.get('period', 'monthly')
 
         qs = Expense.objects.filter(user=request.user)
