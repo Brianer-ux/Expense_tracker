@@ -72,9 +72,10 @@ class ExpenseSummaryView(APIView):
         })
 
 class CategoryBreakdownView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         data = (
             Expense.objects
             .filter(user=request.user)
